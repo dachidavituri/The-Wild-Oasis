@@ -1,6 +1,6 @@
 import { eachDayOfInterval } from "date-fns";
 import { supabase } from "./supabase";
-
+import { notFound } from "next/navigation";
 
 // GET
 
@@ -16,6 +16,7 @@ export async function getCabin(id) {
 
   if (error) {
     console.error(error);
+    notFound();
   }
 
   return data;
@@ -142,7 +143,6 @@ export async function getCountries() {
   }
 }
 
-
 // CREATE
 
 export async function createGuest(newGuest) {
@@ -170,7 +170,6 @@ export async function createBooking(newBooking) {
 
   return data;
 }
-
 
 // UPDATE
 
@@ -203,7 +202,6 @@ export async function updateBooking(id, updatedFields) {
   }
   return data;
 }
-
 
 // DELETE
 
