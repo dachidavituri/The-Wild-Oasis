@@ -43,7 +43,7 @@ function SideNavigation() {
           </li>
         ))}
 
-        <li className="mt-auto">
+        <li className="mt-auto cursor-pointer">
           <SignOutButton />
         </li>
       </ul>
