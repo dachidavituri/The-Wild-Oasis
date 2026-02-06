@@ -3,7 +3,7 @@ function SpinnerMini() {
     <div
       className="
         m-0
-        w-[20px]
+        w-5
         aspect-square
         rounded-full
         border-2

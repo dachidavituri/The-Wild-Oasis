@@ -1,9 +1,9 @@
 "use client";
-import { isWithinInterval } from "date-fns";
+import { differenceInDays, isSameDay, isWithinInterval } from "date-fns";
+import { isPast } from "date-fns";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/dist/style.css";
 import { useReservation } from "../_components/ReservationContext";
-
 function isAlreadyBooked(range, datesArr) {
   return (
     range.from &&
@@ -13,75 +13,83 @@ function isAlreadyBooked(range, datesArr) {
     )
   );
 }
-
 function DateSelector({ settings, cabin, bookedDates }) {
   const { range, setRange, resetRange } = useReservation();
-  // CHANGE
-  const regularPrice = 23;
-  const discount = 23;
-  const numNights = 23;
-  const cabinPrice = 23;
-
-  // SETTINGS
+  const displayRange = isAlreadyBooked(range, bookedDates) ? {} : range;
+  const { regularPrice, discount } = cabin;
+  const numNights = differenceInDays(displayRange.to, displayRange.from);
+  const cabinPrice = numNights * (regularPrice - discount);
   const { minBookingLength, maxBookingLength } = settings;
-
   return (
     <div className="flex flex-col justify-between">
+      {" "}
       <DayPicker
-        classNames={{
-          months: "flex gap-6 p-2",
-        }}
+        classNames={{ months: "flex gap-6 p-2" }}
         mode="range"
-        min={minBookingLength + 1}
+        min={minBookingLength}
         max={maxBookingLength}
         onSelect={setRange}
-        selected={range}
+        selected={displayRange}
         fromMonth={new Date()}
         fromDate={new Date()}
         toYear={new Date().getFullYear() + 5}
         captionLayout="dropdown"
         numberOfMonths={2}
-      />
-
-      <div className="flex items-center justify-between px-8 bg-orange-300 text-primary-800 h-18">
+        disabled={(curDate) =>
+          isPast(curDate) ||
+          bookedDates.some((date) => isSameDay(date, curDate))
+        }
+      />{" "}
+      <div className="flex items-center justify-between px-8 bg-orange-400 text-primary-800 h-18">
+        {" "}
         <div className="flex items-baseline gap-6">
+          {" "}
           <p className="flex gap-2 items-baseline">
+            {" "}
             {discount > 0 ? (
               <>
-                <span className="text-2xl">${regularPrice - discount}</span>
+                {" "}
+                <span className="text-2xl">
+                  ${regularPrice - discount}
+                </span>{" "}
                 <span className="line-through font-semibold text-gray-700">
-                  ${regularPrice}
-                </span>
+                  {" "}
+                  ${regularPrice}{" "}
+                </span>{" "}
               </>
             ) : (
               <span className="text-2xl">${regularPrice}</span>
-            )}
-            <span className="">/night</span>
-          </p>
+            )}{" "}
+            <span className="">/night</span>{" "}
+          </p>{" "}
           {numNights ? (
             <>
+              {" "}
               <p className="bg-orange-300 px-3 py-2 text-2xl">
-                <span>&times;</span> <span>{numNights}</span>
-              </p>
+                {" "}
+                <span>&times;</span> <span>{numNights}</span>{" "}
+              </p>{" "}
               <p>
+                {" "}
                 <span className="text-lg font-bold uppercase">Total</span>{" "}
-                <span className="text-2xl font-semibold">${cabinPrice}</span>
-              </p>
+                <span className="text-2xl font-semibold">
+                  ${cabinPrice}
+                </span>{" "}
+              </p>{" "}
             </>
-          ) : null}
-        </div>
-
+          ) : null}{" "}
+        </div>{" "}
         {range.from || range.to ? (
           <button
             className="border border-gray-800 py-2 px-4 text-sm font-semibold"
             onClick={resetRange}
           >
-            Clear
+            {" "}
+            Clear{" "}
           </button>
-        ) : null}
-      </div>
+        ) : null}{" "}
+      </div>{" "}
     </div>
   );
 }
-
 export default DateSelector;
